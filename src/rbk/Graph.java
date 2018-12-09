@@ -1,3 +1,5 @@
+package rbk;
+
 /**
  * Class to represent a graph
  * @author rbk
@@ -5,8 +7,6 @@
  * Ver 1.2: Made Edge implement Comparable<Edge> based on edge weight, added methods getVertexArray() and getEdgeArray() to Graph class (2018/11/06).
  * Do not modify this file.
  */
-
-package rbk;
 
 import java.util.HashMap;
 import java.util.Iterator;
