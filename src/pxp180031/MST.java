@@ -35,14 +35,14 @@ public class MST extends GraphAlgorithm<MST.MSTVertex> {
 	}
 
 	public static class MSTVertex implements Index, Comparable<MSTVertex>, Factory {
-		boolean seen;  // set to true if vertex is already seen else false
+		boolean seen; // set to true if vertex is already seen else false
 		Vertex parent; // Indicates Parent of the vertex
-		int rank;      // Rank of the vertex to union the sets
-		int d;				 // Minimum distance to the vertex from it's adjacent vertices present in MST set
-		Vertex vertex; 
-		int index;		 // Used in Index heap to keep track of the vertex's index
+		int rank; // Rank of the vertex to union the sets
+		int d; // Minimum distance to the vertex from it's adjacent vertices present in MST set
+		Vertex vertex;
+		int index; // Used in Index heap to keep track of the vertex's index
 
-		MSTVertex(Vertex u) {
+		MSTVertex(Vertex u) { // constructor for initializing the values of the required variables
 			seen = false;
 			parent = u;
 			rank = 0;
@@ -56,20 +56,20 @@ public class MST extends GraphAlgorithm<MST.MSTVertex> {
 
 		/**
 		 * Sets the index of the given Vertex in the Priority Queue
+		 * 
 		 * @param index - To put the vertex in the given Index
 		 */
 		public void putIndex(int index) {
 			this.index = index;
 		}
-		
+
 		/**
-		 *  Gets the Index of the Specific Vertex in the Priority Queue
-		 *  returns the index 
+		 * Gets the Index of the Specific Vertex in the Priority Queue returns the index
 		 */
 		public int getIndex() {
 			return index;
 		}
-		
+
 		/**
 		 * Custom Comparator used to compare the distances of the MSTVertex
 		 */
@@ -84,8 +84,9 @@ public class MST extends GraphAlgorithm<MST.MSTVertex> {
 		}
 
 	}
-	
+
 	/**
+	 * method that find a given vertex in the graph and returns its parent
 	 * 
 	 * @param u
 	 * @return
@@ -98,11 +99,12 @@ public class MST extends GraphAlgorithm<MST.MSTVertex> {
 	}
 
 	/**
+	 * method that combines two components based on rank
 	 * 
 	 * @param ru
 	 * @param rv
 	 */
-	public void union(Vertex ru, Vertex rv) {
+	public void union(Vertex ru, Vertex rv) { // one component with greater rank becomes the parent of other
 		if (get(ru).rank > get(rv).rank) {
 			get(rv).parent = ru;
 		} else if (get(ru).rank < get(rv).rank) {
@@ -114,12 +116,13 @@ public class MST extends GraphAlgorithm<MST.MSTVertex> {
 	}
 
 	/**
+	 * method that runs the kruskals algorithm on a graph
 	 * 
-	 * @return
+	 * @return minimum spanning tree weight
 	 */
 	public long kruskal() {
 		algorithm = "Kruskal";
-		Edge[] edgeArray = g.getEdgeArray();
+		Edge[] edgeArray = g.getEdgeArray(); // array that stores the edges of the graph
 		mst = new LinkedList<>();
 		wmst = 0;
 
@@ -140,12 +143,14 @@ public class MST extends GraphAlgorithm<MST.MSTVertex> {
 	}
 
 	/**
-	 * Finds the Minimum Spanning tree Prim 2 Algorithm
+	 * Finds the Minimum Spanning tree Prim 3 Algorithm
+	 * 
 	 * @param s - Vertex s to indicate the source vertex to start the algorithm from
 	 * @return minimum spanning tree weight
 	 */
-	public long prim3(Vertex s) { //Finds the Minimum Spanning tree using Indexed Heap
+	public long prim3(Vertex s) { // Finds the Minimum Spanning tree using Indexed Heap
 		algorithm = "Indexed Heap";
+//uses indexed heap for storing the vertices with minimum distance based on their weights
 
 		for (Vertex u : g) {
 			get(u).seen = false;
@@ -154,26 +159,29 @@ public class MST extends GraphAlgorithm<MST.MSTVertex> {
 		}
 
 		get(s).d = 0;
-		wmst = 0;
-		IndexedHeap<MSTVertex> q = new IndexedHeap<>(g.size()); //Indexed Heap to keep track of vertex that has minimum distance
+		wmst = 0; // stores the weight of the mst
+		IndexedHeap<MSTVertex> q = new IndexedHeap<>(g.size()); // Indexed Heap to keep track of vertex that has minimum
+		                                                        // distance
 
 		for (Vertex u : g) {
-			q.add(get(u));
+			q.add(get(u)); // adds all the vertices to the queue to iterate through
 		}
-		
+
 		while (!q.isEmpty()) {
-			MSTVertex uMSTVertex = q.remove();
+			MSTVertex uMSTVertex = q.remove(); // removes each element from queue and checks for their weights with neighbours
 			Vertex u = uMSTVertex.vertex;
 			if (!get(u).seen) {
 				get(u).seen = true;
-				wmst = wmst + get(u).d;
+				wmst = wmst + get(u).d; // updates the weights with least weights
 				for (Edge e : g.incident(u)) {
 					Vertex v = e.otherEnd(u);
-				 //Updates the vertex distance if not seen and has lower distance than the current distance
-					if (!get(v).seen && e.getWeight() < get(v).d) { 
+					// Updates the vertex distance if not seen and has lower distance than the
+					// current distance
+					if (!get(v).seen && e.getWeight() < get(v).d) {
 						get(v).d = e.getWeight();
 						get(v).parent = u;
-						q.decreaseKey(get(v)); // Updates the distance of vertex by percolating up the Vertex with the updated distance
+						q.decreaseKey(get(v)); // Updates the distance of vertex by percolating up the Vertex with the updated
+						                       // distance
 					}
 				}
 			}
@@ -183,19 +191,22 @@ public class MST extends GraphAlgorithm<MST.MSTVertex> {
 
 	/**
 	 * Finds the Minimum Spanning tree Prim 2 Algorithm
+	 * 
 	 * @param s - Vertex s to indicate the source vertex to start the algorithm from
 	 * @return minimum spanning tree weight
 	 */
-	public long prim2(Vertex s) { // Algorithm finds the minimum spanning tree using Priority Queue vertices of the graph
+	public long prim2(Vertex s) { // Algorithm finds the minimum spanning tree using Priority Queue vertices of
+	                              // the graph
 		algorithm = "PriorityQueue<Vertex>";
-		for (Vertex u : g) { 				// Initialization of vertices in the graph
+		for (Vertex u : g) { // Initialization of vertices in the graph
 			get(u).seen = false;
 			get(u).parent = null;
 			get(u).d = Integer.MAX_VALUE;
 		}
-		get(s).d = 0;      
+		get(s).d = 0;
 		wmst = 0;
-		PriorityQueue<MSTVertex> q = new PriorityQueue<>(); //Priority Queue to keep track of vertex that has minimum distance
+		PriorityQueue<MSTVertex> q = new PriorityQueue<>(); // Priority Queue to keep track of vertex that has minimum
+		                                                    // distance
 		q.add(get(s));
 
 		while (!q.isEmpty()) {
@@ -206,8 +217,9 @@ public class MST extends GraphAlgorithm<MST.MSTVertex> {
 
 				for (Edge e : g.incident(u)) {
 					Vertex v = e.otherEnd(u);
-				  //Updates the vertex distance if not seen and has lower distance than the current distance
-					if (!get(v).seen && e.getWeight() < get(v).d) { 
+					// Updates the vertex distance if not seen and has lower distance than the
+					// current distance
+					if (!get(v).seen && e.getWeight() < get(v).d) {
 						get(v).d = e.getWeight();
 						get(v).parent = u;
 						q.remove(get(v));
@@ -234,7 +246,7 @@ public class MST extends GraphAlgorithm<MST.MSTVertex> {
 		}
 		get(s).seen = true;
 		wmst = 0;
-		PriorityQueue<Edge> q = new PriorityQueue<>(); //Priority Queue to keep track of Edge that has minimum distance
+		PriorityQueue<Edge> q = new PriorityQueue<>(); // Priority Queue to keep track of Edge that has minimum distance
 
 		for (Edge e : g.incident(s)) {
 			q.add(e);
@@ -250,11 +262,11 @@ public class MST extends GraphAlgorithm<MST.MSTVertex> {
 
 			get(v).seen = true;
 			get(v).parent = u;
-			wmst = wmst + e.getWeight();
+			wmst = wmst + e.getWeight(); // updates the wmst with minimum weights in the graph
 
 			for (Edge e2 : g.incident(v)) {
 				if (!get(e2.otherEnd(v)).seen) {
-					q.add(e2);
+					q.add(e2); // adds the vertices to the queue for checking each edge minimum weight
 				}
 			}
 		}
